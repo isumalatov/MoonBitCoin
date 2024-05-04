@@ -1,9 +1,9 @@
 import Image from "next/image";
-import Avatar01 from "@/public/images/avatar-01.jpg";
-import Avatar02 from "@/public/images/avatar-02.jpg";
-import Avatar03 from "@/public/images/avatar-03.jpg";
-import Avatar04 from "@/public/images/avatar-04.jpg";
-import Avatar05 from "@/public/images/avatar-05.jpg";
+import Avatar01 from "@/public/images/dogecoin.jpg";
+import Avatar02 from "@/public/images/bnb.jpg";
+import Avatar03 from "@/public/images/bitcoin.jpg";
+import Avatar04 from "@/public/images/litecoin.jpg";
+import Avatar05 from "@/public/images/dash.jpg";
 
 export default function SubscribeForm() {
   return (
@@ -43,7 +43,7 @@ export default function SubscribeForm() {
               </div>
               <div>
                 <button className="btn text-gray-100 bg-gray-900 hover:bg-gray-800 dark:text-gray-800 dark:bg-gray-100 dark:hover:bg-white w-full">
-                  Join The Waitlist
+                  Sign In
                 </button>
               </div>
             </div>
@@ -100,13 +100,6 @@ export default function SubscribeForm() {
               />
             </li>
           </ul>
-          <p className="text-sm text-gray-500">
-            Join the{" "}
-            <span className="text-gray-700 dark:text-gray-200 font-medium">
-              2.000+
-            </span>{" "}
-            members who have already signed up.
-          </p>
         </div>
       </div>
     </>

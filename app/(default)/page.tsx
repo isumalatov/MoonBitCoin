@@ -13,11 +13,10 @@ export default function Home() {
         <div className="px-4 sm:px-6">
           <PageHeader
             className="mb-12"
-            title="The software that sparks your imagination"
-            description="Our landing page template works on all devices, so you only have to set it up once, and get beautiful results forever."
+            title="Welcome to Moon Bitcoin Free Bitcoin Faucet"
+            description="Please, enter your Mooner email below to get started"
           >
-            Waitlist v1 <span className="text-gray-300 mx-1">·</span> Coming
-            Soon
+            Login to start earning
           </PageHeader>
 
           <SubscribeForm />
