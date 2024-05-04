@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Home - Creative",
-  description: "Page description",
+  title: "MoonBitCoin - Faucet",
+  description: "BitCoin Free Faucet",
 };
 
 import PageHeader from "@/components/page-header";
