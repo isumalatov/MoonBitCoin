@@ -36,7 +36,7 @@ export default function SubscribeForm() {
                     id="email"
                     className="form-input text-sm w-full pl-10 pr-4"
                     type="email"
-                    placeholder="Your email..."
+                    placeholder="Mooner.app email"
                     required
                   />
                 </div>
