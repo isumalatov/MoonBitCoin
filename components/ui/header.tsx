@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ThemeToggle from "./theme-toggle";
 import Image from "next/image";
-import Avatar03 from "@/public/images/bitcoin.jpg";
+import Avatar01 from "@/public/images/bitcoin.jpg";
 
 export default function Header() {
   return (
@@ -20,7 +20,7 @@ export default function Header() {
               <Link href="/">
                 <Image
                   className="rounded-full"
-                  src={Avatar03}
+                  src={Avatar01}
                   width={28}
                   height={28}
                   alt="Avatar 01"
