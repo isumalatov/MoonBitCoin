@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "MoonBitcoin - Faucet",
   description: "Bitcoin Free Faucet",
@@ -18,8 +20,9 @@ export default function Home() {
           >
             Login to start earning
           </PageHeader>
-
+          <Link href="/signin">
           <SubscribeForm />
+          </Link>
         </div>
       </div>
     </section>
