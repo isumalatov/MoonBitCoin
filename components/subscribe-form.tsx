@@ -42,9 +42,11 @@ export default function SubscribeForm() {
                 </div>
               </div>
               <div>
+                <Link href="/signin">
                 <button className="btn text-gray-100 bg-gray-900 hover:bg-gray-800 dark:text-gray-800 dark:bg-gray-100 dark:hover:bg-white w-full">
                   Sign In
                 </button>
+                  </Link>
               </div>
             </div>
           </form>
