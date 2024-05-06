@@ -13,10 +13,9 @@ export default function Home() {
         <div className="px-4 sm:px-6">
           <PageHeader
             className="mb-12"
-            title="Welcome to Moon Bitcoin Free Bitcoin Faucet"
-            description="Please, enter your Mooner email below to get started"
+            title="Want to claim your Bitcoin?"
           >
-            Login to start earning
+            Earn with us!
           </PageHeader>
           <SubscribeForm />
         </div>
