@@ -4,6 +4,8 @@ import Avatar02 from "@/public/images/bnb.jpg";
 import Avatar03 from "@/public/images/bitcoin.jpg";
 import Avatar04 from "@/public/images/litecoin.jpg";
 import Avatar05 from "@/public/images/dash.jpg";
+import React from "react";
+import Link from "next/link";
 
 export default function SubscribeForm() {
   return (
