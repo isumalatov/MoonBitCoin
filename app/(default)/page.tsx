@@ -1,5 +1,3 @@
-
-
 export const metadata = {
   title: "MoonBitcoin - Faucet",
   description: "Bitcoin Free Faucet",
