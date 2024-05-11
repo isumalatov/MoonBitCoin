@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function ClaimForm() {
   const router = useRouter();
-  const number = 20100; // Reemplaza esto con tu nÃºmero
+  const number = 0.00000002; // Reemplaza esto con tu nÃºmero
 
   const getFontSizeClass = (num: any) => {
     const length = num.toString().length;
