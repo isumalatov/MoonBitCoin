@@ -94,10 +94,22 @@ export async function FaucetClaim(coin: string) {
       }
       user.dogecoin += ((0.0001 * CPM) / 60) * minutesPassed;
       user.lastclaimdogecoin = new Date();
+    } else if (coin === "litecoin") {
+      const currentTime = new Date();
+      const lastClaimTime = user.lastclaimlitecoin;
+      const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
+      const minutesPassed = Math.floor(timeDifference / (1000 * 60));
+      if (minutesPassed < 5) {
+        throw new Error("Please wait for 5 minutes before claiming again");
+      }
+      user.dash += ((0.0001 * CPM) / 60) * minutesPassed;
+      user.lastclaimlitecoin = new Date();
+    } else {
+      throw new Error("Invalid coin");
     }
-
     await user.save();
+    return { success: true, response: "¡Claimed!" };
   } catch (error) {
-    console.error(error);
+    return { success: false, response: (error as Error).message as string };
   }
 }
