@@ -102,7 +102,7 @@ export async function FaucetClaim(coin: string) {
       if (minutesPassed < 5) {
         throw new Error("Please wait for 5 minutes before claiming again");
       }
-      user.dash += ((0.0001 * CPM) / 60) * minutesPassed;
+      user.litecoin += ((0.0001 * CPM) / 60) * minutesPassed;
       user.lastclaimlitecoin = new Date();
     } else {
       throw new Error("Invalid coin");
