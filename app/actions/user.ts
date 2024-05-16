@@ -28,10 +28,12 @@ export async function FaucetSignIn(email: string) {
         };
         const newUser = new User(UserData);
         await newUser.save();
-        await createSession(newUser._id, newUser.email);
+        await createSession(newUser._id.toString(), newUser.email);
+        console.log("User created", newUser);
         return { success: true, response: "User Signin good" };
       } else {
-        await createSession(user._id, user.email);
+        await createSession(user._id.toString(), user.email);
+        console.log("User found", user);
         return { success: true, response: "User Signin good" };
       }
     }
