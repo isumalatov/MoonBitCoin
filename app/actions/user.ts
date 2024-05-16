@@ -20,13 +20,18 @@ export async function FaucetSignIn(email: string) {
           dash: 0,
           dogecoin: 0,
           litecoin: 0,
+          lastclaimbitcoin: new Date("1999-01-01"),
+          lastclaimbnb: new Date("1999-01-01"),
+          lastclaimdash: new Date("1999-01-01"),
+          lastclaimdogecoin: new Date("1999-01-01"),
+          lastclaimlitecoin: new Date("1999-01-01"),
         };
         const newUser = new User(UserData);
         await newUser.save();
-        await createSession(email);
+        await createSession(newUser._id, newUser.email);
         return { success: true, response: "User Signin good" };
       } else {
-        await createSession(email);
+        await createSession(user._id, user.email);
         return { success: true, response: "User Signin good" };
       }
     }
@@ -46,22 +51,53 @@ export async function FaucetClaim(coin: string) {
     if (!user) {
       throw new Error("No user found");
     }
+
+    const CPM = 1;
+
     if (coin === "bitcoin") {
-      user.bitcoin += 0.00000002;
+      const currentTime = new Date();
+      const lastClaimTime = user.lastclaimbitcoin;
+      const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
+      const minutesPassed = Math.floor(timeDifference / (1000 * 60));
+      if (minutesPassed < 5) {
+        throw new Error("Please wait for 5 minutes before claiming again");
+      }
+      user.bitcoin += ((0.0001 * CPM) / 60) * minutesPassed;
+      user.lastclaimbitcoin = new Date();
     } else if (coin === "bnb") {
-      user.bnb += 0.00000002;
+      const currentTime = new Date();
+      const lastClaimTime = user.lastclaimbnb;
+      const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
+      const minutesPassed = Math.floor(timeDifference / (1000 * 60));
+      if (minutesPassed < 5) {
+        throw new Error("Please wait for 5 minutes before claiming again");
+      }
+      user.bnb += ((0.0001 * CPM) / 60) * minutesPassed;
+      user.lastclaimbnb = new Date();
     } else if (coin === "dash") {
-      user.dash += 0.00000002;
+      const currentTime = new Date();
+      const lastClaimTime = user.lastclaimdash;
+      const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
+      const minutesPassed = Math.floor(timeDifference / (1000 * 60));
+      if (minutesPassed < 5) {
+        throw new Error("Please wait for 5 minutes before claiming again");
+      }
+      user.dash += ((0.0001 * CPM) / 60) * minutesPassed;
+      user.lastclaimdash = new Date();
     } else if (coin === "dogecoin") {
-      user.dogecoin += 0.00000002;
-    } else if (coin === "litecoin") {
-      user.litecoin += 0.00000002;
-    } else {
-      throw new Error("Invalid coin");
+      const currentTime = new Date();
+      const lastClaimTime = user.lastclaimdogecoin;
+      const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
+      const minutesPassed = Math.floor(timeDifference / (1000 * 60));
+      if (minutesPassed < 5) {
+        throw new Error("Please wait for 5 minutes before claiming again");
+      }
+      user.dogecoin += ((0.0001 * CPM) / 60) * minutesPassed;
+      user.lastclaimdogecoin = new Date();
     }
+
     await user.save();
-    return { success: true, response: "¡Claimed!" };
   } catch (error) {
-    return { success: false, response: (error as Error).message as string };
+    console.error(error);
   }
 }

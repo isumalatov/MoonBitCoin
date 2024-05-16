@@ -5,4 +5,9 @@ export interface UserData {
   dash: number;
   dogecoin: number;
   litecoin: number;
+  lastclaimbitcoin: Date;
+  lastclaimbnb: Date;
+  lastclaimdash: Date;
+  lastclaimdogecoin: Date;
+  lastclaimlitecoin: Date;
 }

@@ -7,6 +7,11 @@ export interface Users extends mongoose.Document {
   dash: number;
   dogecoin: number;
   litecoin: number;
+  lastclaimbitcoin: Date;
+  lastclaimbnb: Date;
+  lastclaimdash: Date;
+  lastclaimdogecoin: Date;
+  lastclaimlitecoin: Date;
 }
 
 const UserSchema = new mongoose.Schema<Users>({
@@ -16,6 +21,11 @@ const UserSchema = new mongoose.Schema<Users>({
   dash: { type: Number, required: true },
   dogecoin: { type: Number, required: true },
   litecoin: { type: Number, required: true },
+  lastclaimbitcoin: { type: Date, required: true },
+  lastclaimbnb: { type: Date, required: true },
+  lastclaimdash: { type: Date, required: true },
+  lastclaimdogecoin: { type: Date, required: true },
+  lastclaimlitecoin: { type: Date, required: true },
 });
 
 export default mongoose.models.User ||
