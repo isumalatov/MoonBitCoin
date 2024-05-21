@@ -63,7 +63,9 @@ export async function FaucetClaim(coin: string) {
       .then((result) => {
         price = parseFloat(result.data.priceUsd);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => {
+        throw new Error("Failed to fetch coin data");
+      });
 
     const coins = ["bitcoin", "bnb", "dash", "dogecoin", "litecoin"];
     if (!coins.includes(coin)) {
@@ -73,10 +75,16 @@ export async function FaucetClaim(coin: string) {
     const currentTime = new Date();
     const lastClaimTime = user[`lastclaim${coin}`];
     const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
-    const minutesPassed = Math.floor(timeDifference / (1000 * 60));
+    let minutesPassed = Math.floor(timeDifference / (1000 * 60));
+
     if (minutesPassed < 5) {
       throw new Error("Please wait for 5 minutes before claiming again");
     }
+
+    if (minutesPassed > 60) {
+      minutesPassed = 60;
+    }
+
     user[coin] += (((0.0001 * CPM) / 60) * minutesPassed) / price;
     user[`lastclaim${coin}`] = new Date();
 
