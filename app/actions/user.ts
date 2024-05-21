@@ -53,7 +53,7 @@ export async function FaucetClaim(coin: string) {
     }
 
     const CPM = 1;
-    let price = 0;
+    var price = 0;
 
     fetch(`https://api.coincap.io/v2/assets/${coin}`, {
       method: "GET",
@@ -75,7 +75,8 @@ export async function FaucetClaim(coin: string) {
     const currentTime = new Date();
     const lastClaimTime = user[`lastclaim${coin}`];
     const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
-    let minutesPassed = Math.floor(timeDifference / (1000 * 60));
+    var minutesPassed = Math.floor(timeDifference / (1000 * 60));
+    console.log(minutesPassed);
 
     if (minutesPassed < 5) {
       throw new Error("Please wait for 5 minutes before claiming again");
