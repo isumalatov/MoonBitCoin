@@ -3,7 +3,8 @@
 import dbConnect from "@/app/lib/dbConnect";
 import User from "@/models/User";
 import { UserData } from "@/app/lib/definitions";
-import { createSession, deleteSession, getSession } from "@/app/lib/session";
+import { createSession, getSession } from "@/app/lib/session";
+import { Decimal } from "decimal.js";
 
 export async function FaucetSignIn(email: string) {
   try {
@@ -52,8 +53,8 @@ export async function FaucetClaim(coin: string) {
       throw new Error("No user found");
     }
 
-    const CPM = 1;
-    var price = 0;
+    const CPM = new Decimal(1);
+    let price = new Decimal(0);
 
     fetch(`https://api.coincap.io/v2/assets/${coin}`, {
       method: "GET",
@@ -61,7 +62,7 @@ export async function FaucetClaim(coin: string) {
     })
       .then((response) => response.json())
       .then((result) => {
-        price = parseFloat(result.data.priceUsd);
+        price = new Decimal(result.data.priceUsd);
       })
       .catch((error) => {
         throw new Error("Failed to fetch coin data");
@@ -85,7 +86,14 @@ export async function FaucetClaim(coin: string) {
       minutesPassed = 60;
     }
 
-    user[coin] += (((0.0001 * CPM) / 60) * minutesPassed) / price;
+    const numerator = new Decimal(0.0001)
+      .times(CPM)
+      .dividedBy(60)
+      .times(minutesPassed);
+    user[coin] = new Decimal(user[coin])
+      .plus(numerator.dividedBy(price))
+      .toNumber();
+    console.log(user[coin]);
     user[`lastclaim${coin}`] = new Date();
 
     await user.save();
