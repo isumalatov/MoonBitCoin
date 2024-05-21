@@ -90,6 +90,7 @@ export async function FaucetClaim(coin: string) {
       .times(CPM)
       .dividedBy(60)
       .times(minutesPassed);
+    console.log(numerator.dividedBy(price).toNumber());
     user[coin] = new Decimal(user[coin])
       .plus(numerator.dividedBy(price))
       .toNumber();
