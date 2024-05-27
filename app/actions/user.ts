@@ -55,17 +55,16 @@ export async function FaucetClaim(coin: string) {
     const CPM = 1;
     var price = 0;
 
-    fetch(`https://api.coincap.io/v2/assets/${coin}`, {
-      method: "GET",
-      redirect: "follow",
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        price = parseFloat(result.data.priceUsd);
-      })
-      .catch((error) => {
-        throw new Error("Failed to fetch coin data");
+    try {
+      const response = await fetch(`https://api.coincap.io/v2/assets/${coin}`, {
+        method: "GET",
+        redirect: "follow",
       });
+      const result = await response.json();
+      price = parseFloat(result.data.priceUsd);
+    } catch (error) {
+      throw new Error("Failed to fetch coin price");
+    }
 
     const coins = ["bitcoin", "bnb", "dash", "dogecoin", "litecoin"];
     if (!coins.includes(coin)) {
@@ -76,7 +75,6 @@ export async function FaucetClaim(coin: string) {
     const lastClaimTime = user[`lastclaim${coin}`];
     const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
     var minutesPassed = Math.floor(timeDifference / (1000 * 60));
-    console.log(minutesPassed);
 
     if (minutesPassed < 5) {
       throw new Error("Please wait for 5 minutes before claiming again");
@@ -85,10 +83,6 @@ export async function FaucetClaim(coin: string) {
     if (minutesPassed > 60) {
       minutesPassed = 60;
     }
-
-    console.log(CPM, price, minutesPassed);
-    console.log(((0.0001 * CPM) / 60) * minutesPassed);
-    console.log((((0.0001 * CPM) / 60) * minutesPassed) / price);
 
     user[coin] += (((0.0001 * CPM) / 60) * minutesPassed) / price;
     user[`lastclaim${coin}`] = new Date();
