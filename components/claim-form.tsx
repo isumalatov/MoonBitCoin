@@ -33,6 +33,10 @@ export default function ClaimForm() {
     const { success, response } = await FaucetClaim("bitcoin");
     if (success) {
       toast.success(response);
+      const userData = await FetchUserData();
+      if (userData.success) {
+        setUser(userData.response as UserData);
+      }
     } else {
       toast.error(response);
     }
@@ -76,7 +80,11 @@ export default function ClaimForm() {
               Current claim:
             </h1>
             <p className={`text-center font-bold text-2xl`}>
-              {loading ? "Loading..." : user?.bitcoin.toFixed(9)}
+              {loading
+                ? "Loading..."
+                : user?.bitcoin === 0
+                ? "0"
+                : user?.bitcoin.toFixed(9)}
             </p>
           </div>
           <div className="w-2/3 h-full rounded-md text-gray-100 bg-gray-900 hover:bg-gray-800 dark:text-gray-800 dark:bg-gray-100 dark:hover:bg-white">
