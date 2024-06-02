@@ -25,6 +25,7 @@ export async function FaucetSignIn(email: string) {
           lastclaimdash: new Date("1999-01-01"),
           lastclaimdogecoin: new Date("1999-01-01"),
           lastclaimlitecoin: new Date("1999-01-01"),
+          dailybonus: 0,
         };
         const newUser = new User(UserData);
         await newUser.save();
@@ -84,7 +85,15 @@ export async function FaucetClaim(coin: string) {
       minutesPassed = 60;
     }
 
-    user[coin] += (((0.0001 * CPM) / 60) * minutesPassed) / price;
+    const oneDay = 24 * 60 * 60 * 1000;
+    if (timeDifference < oneDay) {
+      user.dailyBonus = Math.min(user.dailyBonus + 1, 100);
+    } else {
+      user.dailyBonus = 0;
+    }
+
+    const bonusMultiplier = 1 + user.dailyBonus / 100;
+    user[coin] += (((0.0001 * CPM) / 60) * minutesPassed * bonusMultiplier) / price;
     user[`lastclaim${coin}`] = new Date();
 
     await user.save();

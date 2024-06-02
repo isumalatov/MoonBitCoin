@@ -12,6 +12,7 @@ export interface Users extends mongoose.Document {
   lastclaimdash: Date;
   lastclaimdogecoin: Date;
   lastclaimlitecoin: Date;
+  dailybonus: number;
 }
 
 const UserSchema = new mongoose.Schema<Users>({
@@ -26,6 +27,7 @@ const UserSchema = new mongoose.Schema<Users>({
   lastclaimdash: { type: Date, required: true },
   lastclaimdogecoin: { type: Date, required: true },
   lastclaimlitecoin: { type: Date, required: true },
+  dailybonus: { type: Number, required: true },
 });
 
 export default mongoose.models.User ||
