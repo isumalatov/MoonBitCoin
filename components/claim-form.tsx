@@ -6,12 +6,28 @@ import Avatar03 from "@/public/images/bitcoin.jpg";
 import Avatar04 from "@/public/images/litecoin.jpg";
 import Avatar05 from "@/public/images/dash.jpg";
 import React from "react";
-import { FaucetClaim } from "@/app/actions/user";
+import { useEffect, useState } from "react";
+import { FaucetClaim, FetchUserData } from "@/app/actions/user";
 import { toast } from "react-toastify";
+import { UserData } from "@/app/lib/definitions";
 
 export default function ClaimForm() {
-  const number = 0.00000002;
-  const formattedNumber = number.toFixed(8);
+  const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const { success, response } = await FetchUserData();
+      if (success) {
+        setUser(response as UserData);
+      } else {
+        toast.error(response as string);
+      }
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
 
   async function handleClaim() {
     const { success, response } = await FaucetClaim("bitcoin");
@@ -60,7 +76,7 @@ export default function ClaimForm() {
               Current claim:
             </h1>
             <p className={`text-center font-bold text-2xl`}>
-              {formattedNumber}
+              {loading ? "Loading..." : user?.bitcoin.toFixed(9)}
             </p>
           </div>
           <div className="w-2/3 h-full rounded-md text-gray-100 bg-gray-900 hover:bg-gray-800 dark:text-gray-800 dark:bg-gray-100 dark:hover:bg-white">
@@ -68,7 +84,7 @@ export default function ClaimForm() {
               Daily bonus:
             </h1>
             <p className={`text-center font-bold text-2xl`}>
-              {formattedNumber}
+              {loading ? "Loading..." : user?.dailybonus}
             </p>
           </div>
         </div>

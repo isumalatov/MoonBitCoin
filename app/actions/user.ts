@@ -87,18 +87,48 @@ export async function FaucetClaim(coin: string) {
 
     const oneDay = 24 * 60 * 60 * 1000;
     if (timeDifference < oneDay) {
-      user.dailyBonus = Math.min(user.dailyBonus + 1, 100);
+      user.dailyBonus = Math.min(user.dailybonus + 1, 100);
     } else {
       user.dailyBonus = 0;
     }
-
-    const bonusMultiplier = 1 + user.dailyBonus / 100;
+    const bonusMultiplier = 1 + user.dailybonus / 100;
     user[coin] += (((0.0001 * CPM) / 60) * minutesPassed * bonusMultiplier) / price;
     user[`lastclaim${coin}`] = new Date();
-
     await user.save();
     return { success: true, response: "¡Claimed!" };
   } catch (error) {
     return { success: false, response: (error as Error).message as string };
+  }
+}
+
+export async function FetchUserData() {
+  try {
+    await dbConnect();
+    const session = await getSession();
+    if (!session) {
+      return { success: false, response: "Error al cargar usuario" };
+    }
+    const user = await User.findOne({ _id: session.userId });
+    if (!user) {
+      return { success: false, response: "Error al cargar usuario" };
+    }
+    const userData: UserData = {
+      email: user.email,
+      bitcoin: user.bitcoin,
+      bnb: user.bnb,
+      dash: user.dash,
+      dogecoin: user.dogecoin,
+      litecoin: user.litecoin,
+      lastclaimbitcoin: user.lastclaimbitcoin,
+      lastclaimbnb: user.lastclaimbnb,
+      lastclaimdash: user.lastclaimdash,
+      lastclaimdogecoin: user.lastclaimdogecoin,
+      lastclaimlitecoin: user.lastclaimlitecoin,
+      dailybonus: user.dailybonus,
+    };
+    return { success: true, response: userData };
+  } catch (err) {
+    console.log(err);
+    return { success: false, response: "Error al cargar usuario" };
   }
 }
