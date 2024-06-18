@@ -91,9 +91,13 @@ export default function ClaimForm() {
             <h1 className="mt-4 text-center text-gray-100 dark:text-gray-800">
               Daily bonus:
             </h1>
-            <p className={`text-center font-bold text-2xl`}>
-              {loading ? "Loading..." : user?.dailybonus}
-            </p>
+            {loading ? (
+              <p className={`text-center font-bold text-2xl`}>Loading...</p>
+            ) : (
+              <p className={`text-center font-bold text-2xl`}>
+                {user?.dailybonus}%
+              </p>
+            )}
           </div>
         </div>
       </div>
