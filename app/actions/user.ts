@@ -106,11 +106,11 @@ export async function FetchUserData() {
     await dbConnect();
     const session = await getSession();
     if (!session) {
-      return { success: false, response: "Error al cargar usuario" };
+      return { success: false, response: "Error fetching user data" };
     }
     const user = await User.findOne({ _id: session.userId });
     if (!user) {
-      return { success: false, response: "Error al cargar usuario" };
+      return { success: false, response: "Error fetching user data" };
     }
     const userData: UserData = {
       email: user.email,
@@ -129,6 +129,24 @@ export async function FetchUserData() {
     return { success: true, response: userData };
   } catch (err) {
     console.log(err);
-    return { success: false, response: "Error al cargar usuario" };
+    return { success: false, response: "Error fetching user data" };
+  }
+}
+
+export async function ReCaptchaVerify(token: string) {
+  try {
+    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      },
+    });
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error("Failed to verify reCAPTCHA");
+    }
+    return { success: true, response: "reCAPTCHA verified" };
+  } catch (error) {
+    return { success: false, response: (error as Error).message as string };
   }
 }

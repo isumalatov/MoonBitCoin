@@ -6,14 +6,23 @@ import Avatar03 from "@/public/images/bitcoin.jpg";
 import Avatar04 from "@/public/images/litecoin.jpg";
 import Avatar05 from "@/public/images/dash.jpg";
 import React from "react";
-import { useEffect, useState } from "react";
-import { FaucetClaim, FetchUserData } from "@/app/actions/user";
+import { useEffect, useState, useRef } from "react";
+import {
+  FaucetClaim,
+  FetchUserData,
+  ReCaptchaVerify,
+} from "@/app/actions/user";
 import { toast } from "react-toastify";
 import { UserData } from "@/app/lib/definitions";
+import ReCAPTCHA from "react-google-recaptcha";
+
+const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!;
 
 export default function ClaimForm() {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isVerified, setIsVerified] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -42,6 +51,27 @@ export default function ClaimForm() {
     }
   }
 
+  async function handleRecaptcha(token: string | null) {
+    if (!token) {
+      return;
+    }
+    const { success, response } = await ReCaptchaVerify(token);
+    if (success) {
+      setIsVerified(true);
+    } else {
+      toast.error(response);
+      recaptchaRef.current?.reset();
+    }
+  }
+
+  async function handleChangedRecaptcha(token: string | null) {
+    await handleRecaptcha(token);
+  }
+
+  async function handleExpiredRecaptcha() {
+    setIsVerified(false);
+  }
+
   return (
     <>
       <div className="relative flex items-center justify-center gap-10 before:h-px before:w-full before:border-b before:[border-image:linear-gradient(to_right,transparent,theme(colors.indigo.300/.8),transparent)1] dark:before:[border-image:linear-gradient(to_right,transparent,theme(colors.indigo.300/.16),transparent)1] before:shadow-sm before:shadow-white/20 dark:before:shadow-none after:h-px after:w-full after:border-b after:[border-image:linear-gradient(to_right,transparent,theme(colors.indigo.300/.8),transparent)1] dark:after:[border-image:linear-gradient(to_right,transparent,theme(colors.indigo.300/.16),transparent)1] after:shadow-sm after:shadow-white/20 dark:after:shadow-none mb-11">
@@ -53,12 +83,20 @@ export default function ClaimForm() {
               aria-hidden="true"
             />
             <div className="space-y-3">
-              <div>
-                <div className="relative">captcha</div>
+              <div className="flex items-center justify-center">
+                <ReCAPTCHA
+                  sitekey={recaptchaSiteKey}
+                  ref={recaptchaRef}
+                  onChange={handleChangedRecaptcha}
+                  onExpired={handleExpiredRecaptcha}
+                />
               </div>
               <div>
                 <button
-                  className="btn text-gray-100 bg-gray-900 hover:bg-gray-800 dark:text-gray-800 dark:bg-gray-100 dark:hover:bg-white w-full"
+                  className={`btn text-gray-100 bg-gray-900 hover:bg-gray-800 dark:text-gray-800 dark:bg-gray-100 dark:hover:bg-white w-full ${
+                    !isVerified ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  disabled={!isVerified}
                   onClick={handleClaim}
                 >
                   Claim
