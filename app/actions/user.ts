@@ -86,12 +86,10 @@ export async function FaucetClaim(coin: string) {
       minutesPassed = 60;
     }
 
-    if (daysPassed > 2) {
-      user.dailybonus = 0;
-    }
-
-    if(daysPassed > 1 && daysPassed < 2){
+    if (daysPassed === 1) {
       user.dailybonus = Math.min(user.dailybonus + 1, 100);
+    }else if (daysPassed > 1) {
+      user.dailybonus = 0;
     }
     
     const bonusMultiplier = 1 + user.dailybonus / 100;
