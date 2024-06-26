@@ -85,8 +85,8 @@ export async function FaucetClaim(coin: string) {
       minutesPassed = 60;
     }
 
-    const oneDay = 24 * 60 * 60 * 1000;
-    if (timeDifference < oneDay) {
+    const oneDay =  24 * 60;
+    if (minutesPassed < oneDay) {
       user.dailyBonus = Math.min(user.dailybonus + 1, 100);
     } else {
       user.dailyBonus = 0;
