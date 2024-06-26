@@ -76,6 +76,7 @@ export async function FaucetClaim(coin: string) {
     const lastClaimTime = user[`lastclaim${coin}`];
     const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
     var minutesPassed = Math.floor(timeDifference / (1000 * 60));
+    var daysPassed = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
     if (minutesPassed < 5) {
       throw new Error("Please wait for 5 minutes before claiming again");
@@ -85,14 +86,17 @@ export async function FaucetClaim(coin: string) {
       minutesPassed = 60;
     }
 
-    const oneDay =  24 * 60;
-    if (minutesPassed < oneDay) {
-      user.dailyBonus = Math.min(user.dailybonus + 1, 100);
-    } else {
-      user.dailyBonus = 0;
+    if (daysPassed > 2) {
+      user.dailybonus = 0;
     }
+
+    if(daysPassed > 1 && daysPassed < 2){
+      user.dailybonus = Math.min(user.dailybonus + 1, 100);
+    }
+    
     const bonusMultiplier = 1 + user.dailybonus / 100;
-    user[coin] += (((0.0001 * CPM) / 60) * minutesPassed * bonusMultiplier) / price;
+    user[coin] +=
+      (((0.0001 * CPM) / 60) * minutesPassed * bonusMultiplier) / price;
     user[`lastclaim${coin}`] = new Date();
     await user.save();
     return { success: true, response: "¡Claimed!" };
@@ -135,12 +139,15 @@ export async function FetchUserData() {
 
 export async function ReCaptchaVerify(token: string) {
   try {
-    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-      },
-    });
+    const response = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+      }
+    );
     const result = await response.json();
     if (!result.success) {
       throw new Error("Failed to verify reCAPTCHA");
