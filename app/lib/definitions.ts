@@ -10,5 +10,14 @@ export interface UserData {
   lastclaimdash: Date;
   lastclaimdogecoin: Date;
   lastclaimlitecoin: Date;
-  dailybonus: number;
+  dailybonusbitcoin: number;
+  dailybonusbnb: number;
+  dailybonusdash: number;
+  dailybonusdogecoin: number;
+  dailybonuslitecoin: number;
+}
+
+export interface UserDataClaim {
+  dailybonus:number
+  currentclaim:number
 }

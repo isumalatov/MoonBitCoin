@@ -2,7 +2,7 @@
 
 import dbConnect from "@/app/lib/dbConnect";
 import User from "@/models/User";
-import { UserData } from "@/app/lib/definitions";
+import { UserData, UserDataClaim } from "@/app/lib/definitions";
 import { createSession, deleteSession, getSession } from "@/app/lib/session";
 
 export async function FaucetSignIn(email: string) {
@@ -20,12 +20,16 @@ export async function FaucetSignIn(email: string) {
           dash: 0,
           dogecoin: 0,
           litecoin: 0,
-          lastclaimbitcoin: new Date("1999-01-01"),
-          lastclaimbnb: new Date("1999-01-01"),
-          lastclaimdash: new Date("1999-01-01"),
-          lastclaimdogecoin: new Date("1999-01-01"),
-          lastclaimlitecoin: new Date("1999-01-01"),
-          dailybonus: 0,
+          lastclaimbitcoin: new Date(),
+          lastclaimbnb: new Date(),
+          lastclaimdash: new Date(),
+          lastclaimdogecoin: new Date(),
+          lastclaimlitecoin: new Date(),
+          dailybonusbitcoin: 0,
+          dailybonusbnb: 0,
+          dailybonusdash: 0,
+          dailybonusdogecoin: 0,
+          dailybonuslitecoin: 0,
         };
         const newUser = new User(UserData);
         await newUser.save();
@@ -87,12 +91,12 @@ export async function FaucetClaim(coin: string) {
     }
 
     if (daysPassed === 1) {
-      user.dailybonus = Math.min(user.dailybonus + 1, 100);
-    }else if (daysPassed > 1) {
+      user[`dailybonus${coin}`] = Math.min(user[`dailybonus${coin}`] + 1, 100);
+    } else if (daysPassed > 1) {
       user.dailybonus = 0;
     }
-    
-    const bonusMultiplier = 1 + user.dailybonus / 100;
+
+    const bonusMultiplier = 1 + user[`dailybonus${coin}`] / 100;
     user[coin] +=
       (((0.0001 * CPM) / 60) * minutesPassed * bonusMultiplier) / price;
     user[`lastclaim${coin}`] = new Date();
@@ -103,7 +107,7 @@ export async function FaucetClaim(coin: string) {
   }
 }
 
-export async function FetchUserData() {
+export async function FetchUserData(coin: string) {
   try {
     await dbConnect();
     const session = await getSession();
@@ -114,19 +118,46 @@ export async function FetchUserData() {
     if (!user) {
       return { success: false, response: "Error fetching user data" };
     }
-    const userData: UserData = {
-      email: user.email,
-      bitcoin: user.bitcoin,
-      bnb: user.bnb,
-      dash: user.dash,
-      dogecoin: user.dogecoin,
-      litecoin: user.litecoin,
-      lastclaimbitcoin: user.lastclaimbitcoin,
-      lastclaimbnb: user.lastclaimbnb,
-      lastclaimdash: user.lastclaimdash,
-      lastclaimdogecoin: user.lastclaimdogecoin,
-      lastclaimlitecoin: user.lastclaimlitecoin,
-      dailybonus: user.dailybonus,
+
+    const CPM = 1;
+    var price = 0;
+
+    try {
+      const response = await fetch(`https://api.coincap.io/v2/assets/${coin}`, {
+        method: "GET",
+        redirect: "follow",
+      });
+      const result = await response.json();
+      price = parseFloat(result.data.priceUsd);
+    } catch (error) {
+      throw new Error("Failed to fetch coin price");
+    }
+
+    const coins = ["bitcoin", "bnb", "dash", "dogecoin", "litecoin"];
+    if (!coins.includes(coin)) {
+      throw new Error("Invalid coin");
+    }
+
+    const currentTime = new Date();
+    const lastClaimTime = user[`lastclaim${coin}`];
+    const timeDifference = currentTime.getTime() - lastClaimTime.getTime();
+    var minutesPassed = Math.floor(timeDifference / (1000 * 60));
+    var daysPassed = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    let dailybonususer = user[`dailybonus${coin}`];
+
+    if (daysPassed === 1) {
+      dailybonususer = Math.min(user[`dailybonus${coin}`] + 1, 100);
+    } else if (daysPassed > 1) {
+      dailybonususer = 0;
+    }
+
+    const bonusMultiplier = 1 + user[`dailybonus${coin}`] / 100;
+    const currentclaim =
+      (((0.0001 * CPM) / 60) * minutesPassed * bonusMultiplier) / price;
+      
+    const userData: UserDataClaim = {
+      dailybonus: dailybonususer,
+      currentclaim: currentclaim,
     };
     return { success: true, response: userData };
   } catch (err) {

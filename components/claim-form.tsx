@@ -13,13 +13,13 @@ import {
   ReCaptchaVerify,
 } from "@/app/actions/user";
 import { toast } from "react-toastify";
-import { UserData } from "@/app/lib/definitions";
+import { UserDataClaim } from "@/app/lib/definitions";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!;
 
 export default function ClaimForm() {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserDataClaim | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isVerified, setIsVerified] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
@@ -27,9 +27,10 @@ export default function ClaimForm() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const { success, response } = await FetchUserData();
+      const { success, response } = await FetchUserData("bitcoin");
       if (success) {
-        setUser(response as UserData);
+        console.log(response);
+        setUser(response as UserDataClaim);
       } else {
         toast.error(response as string);
       }
@@ -42,9 +43,10 @@ export default function ClaimForm() {
     const { success, response } = await FaucetClaim("bitcoin");
     if (success) {
       toast.success(response);
-      const userData = await FetchUserData();
+      const userData = await FetchUserData("bitcoin");
       if (userData.success) {
-        setUser(userData.response as UserData);
+        console.log(userData.response);
+        setUser(userData.response as UserDataClaim);
       }
     } else {
       toast.error(response);
@@ -120,9 +122,9 @@ export default function ClaimForm() {
             <p className={`text-center font-bold text-2xl`}>
               {loading
                 ? "Loading..."
-                : user?.bitcoin === 0
+                : user?.currentclaim === 0
                 ? "0"
-                : user?.bitcoin.toFixed(9)}
+                : user?.currentclaim.toFixed(9)}
             </p>
           </div>
           <div className="w-2/3 h-full rounded-md text-gray-100 bg-gray-900 hover:bg-gray-800 dark:text-gray-800 dark:bg-gray-100 dark:hover:bg-white">
