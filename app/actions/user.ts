@@ -13,24 +13,8 @@ export async function FaucetSignIn(email: string) {
       throw new Error("Email is required");
     } else {
       if (!user) {
-        const UserData: UserData = {
-          email: email,
-          bitcoin: 0,
-          bnb: 0,
-          dash: 0,
-          dogecoin: 0,
-          litecoin: 0,
-          lastclaimbitcoin: new Date(),
-          lastclaimbnb: new Date(),
-          lastclaimdash: new Date(),
-          lastclaimdogecoin: new Date(),
-          lastclaimlitecoin: new Date(),
-          dailybonusbitcoin: 0,
-          dailybonusbnb: 0,
-          dailybonusdash: 0,
-          dailybonusdogecoin: 0,
-          dailybonuslitecoin: 0,
-        };
+    return { success: false, response: "User not found, please register." };
+      }
         const newUser = new User(UserData);
         await newUser.save();
         await createSession(newUser._id, newUser.email);
