@@ -15,10 +15,6 @@ export async function FaucetSignIn(email: string) {
       if (!user) {
     return { success: false, response: "User not found, please register." };
       }
-        const newUser = new User(UserData);
-        await newUser.save();
-        await createSession(newUser._id, newUser.email);
-        return { success: true, response: "User Signin good" };
       } else {
         await createSession(user._id, user.email);
         return { success: true, response: "User Signin good" };
